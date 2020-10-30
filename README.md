@@ -1,4 +1,4 @@
-# ngmap
+# ngmap setup guide (Aloha!)
 
 ```
 cat /etc/os-release
@@ -20,6 +20,9 @@ $ sudo apt install docker-ce
 $ sudo systemctl status docker
 $ sudo systemctl enable docker
 ```
+
+# if this method above causes problems with docker install, reference this url: https://www.raspberrypi.org/blog/docker-comes-to-raspberry-pi/
+
 
 ## setup tileserver
 ```
