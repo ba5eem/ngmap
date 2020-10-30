@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+ <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+   integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+   crossorigin=""/>
+    <!-- Make sure you put this AFTER Leaflet's CSS -->
+ <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
+   integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
+   crossorigin=""></script>
+
+<head>
+  <meta charset="UTF-8">
+  <title>ARL MAP </title>
+</head>
+<body>
+    <div id="buttons">
+        <button id="coords_button">coords</button>
+        <button id="test_coords_button">test_coords</button>
+    </div>
+   <div id="mapid"></div>
+
+</body>
+</html>
+
+<style>
+
+  #mapid { height: 800px; }
+
+</style>
+<script type="text/javascript" src="arl.js"></script>
+
+<script>
+  var url = "http://localhost:8080/styles/basic-preview/{z}/{x}/{y}.png";
+  var attribution = "<a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a>____";
+  var center = [21.2619,-157.8069];
+  var mymap = L.map('mapid').setView([21.2619,-157.8069], 16);
+  L.tileLayer(url, { attribution: attribution, maxZoom: 18 }).addTo(mymap);
+  var markersLayer = new L.LayerGroup();
+  function marker(lat,lng){
+    return L.marker([lat,lng]).addTo(mymap);
+  }
+
+
+
+  /* ARL CODE BELOW */
+
+let nodes = new L.layerGroup(); // rather than add markers to map layer, create new layergroup
+nodes.addTo(mymap);   
+
+setInterval(() => {
+    getJSON()
+    .then(json => {
+      nodes.clearLayers(); // remove previous markers from layer group
+      json.data.map((e,i) => {
+        if(check_lat_lon(e.coords[0], e.coords[1])){
+          let time = getTime();
+          let marker = L.marker(e.coords).addTo(nodes);
+          // added node id and time to marker pop-up
+          marker.bindPopup(`<p>${e.node_id}</p><p>${time}</p>`)
+        }
+        else{
+          console.log('invalid coordinates and/or 1 or more values are missing to add marker')
+        }
+      })
+    })
+    .catch(err => {
+      console.log('err: ',err)
+    })
+  }, 2000)
+   
+/* ARL CODE ABOVE */
+
+
+</script>
